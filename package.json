@@ -1,0 +1,41 @@
+{
+	"name": "locuz",
+	"version": "1.0.0",
+	"description": "Connect with people nearby you.",
+	"main": "server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node server.js",
+		"postinstall": "node postinstall.js",
+		"prod:logs": "heroku logs --app locuzapp"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vasanthv/locuz.git"
+	},
+	"keywords": [
+		"location-based",
+		"proximity",
+		"geolocation"
+	],
+	"author": "Vasanth.V <imvasanthv@gmail.com>",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/vasanthv/locuz/issues"
+	},
+	"homepage": "https://github.com/vasanthv/locuz#readme",
+	"dependencies": {
+		"@sentry/node": "^6.4.1",
+		"@sentry/tracing": "^6.4.1",
+		"axios": "^0.21.1",
+		"body-parser": "^1.19.0",
+		"express": "^4.17.1",
+		"express-rate-limit": "^5.2.6",
+		"firebase-admin": "^9.8.0",
+		"mongoose": "^5.12.10",
+		"morgan": "^1.10.0",
+		"page": "^1.11.6",
+		"uuid": "^8.3.2",
+		"vue": "^2.6.12"
+	}
+}

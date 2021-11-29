@@ -1,0 +1,24 @@
+{
+	"name": "Locuz",
+	"short_name": "Locuz",
+	"description": "Connect with people nearby you.",
+	"icons": [
+		{
+			"src": "icon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "icon-maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	],
+	"theme_color": "#ffffff",
+	"background_color": "#ffffff",
+	"display": "standalone",
+	"start_url": "/",
+	"permissions": ["geolocation"]
+}

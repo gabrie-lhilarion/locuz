@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+	<defs>
+		<linearGradient id="color">
+				<stop offset="0" stop-color="#EB3293" />
+				<stop offset="1" stop-color="#FABB52" />
+		</linearGradient>
+	</defs>
+	<path fill="url(#color)" fill-rule="evenodd" d="M 24.00,9.00 C 15.72,9.00 9.00,15.72 9.00,24.00 9.00,32.28 15.72,39.00 24.00,39.00 32.28,39.00 39.00,32.28 39.00,24.00 39.00,15.72 32.28,9.00 24.00,9.00 Z M 24.00,15.00 C 19.03,15.00 15.00,19.03 15.00,24.00 15.00,28.97 19.03,33.00 24.00,33.00 28.97,33.00 33.00,28.97 33.00,24.00 33.00,19.03 28.97,15.00 24.00,15.00 Z" />
+</svg>

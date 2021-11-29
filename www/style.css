@@ -1,0 +1,353 @@
+:root {
+	--background: #ffffff;
+	--light1: #f8f8f8;
+	--light2: #efefef;
+	--text: #262626;
+	--gray: #888888;
+	--green: #2ecc71;
+	--red: #e74c3c;
+}
+* {
+	outline: 0;
+}
+html {
+	-webkit-overflow-scrolling: touch;
+}
+body {
+	background: var(--background);
+	color: var(--text);
+	margin: 0;
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		"Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	line-height: 1.6;
+	transition: background 0.5s;
+}
+a {
+	color: inherit;
+	text-decoration: underline;
+}
+button {
+	font-family: inherit;
+	background: var(--text);
+	border: none;
+	border-radius: 0.5rem;
+	padding: 0.7rem 1rem;
+	font-size: 1rem;
+	cursor: pointer;
+	color: var(--background);
+	border: 2px solid var(--text);
+}
+button.full-width {
+	background: var(--light1);
+	border-top: 1px solid var(--light2);
+	border-bottom: 1px solid var(--light2);
+	border-left: none;
+	border-right: none;
+	border-radius: 0px;
+	color: var(--text);
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+}
+input[type="text"],
+input[type="number"],
+input[type="password"] {
+	background: var(--light2);
+	color: var(--text);
+	display: block;
+	border: none;
+	font: inherit;
+	font-size: 1rem;
+	padding: 0px;
+	border-radius: 5px;
+	box-sizing: border-box;
+}
+button.ghost {
+	background: var(--background);
+	color: var(--text);
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+input::placeholder {
+	opacity: 0.75;
+}
+.container {
+	width: 100%;
+	max-width: 680px;
+	margin-inline: auto;
+}
+.gray {
+	color: var(--gray);
+}
+.red {
+	color: var(--red);
+}
+.small {
+	font-size: 0.75rem;
+}
+.thin {
+	font-weight: 300;
+}
+.bold {
+	font-weight: bold;
+}
+.center {
+	text-align: center;
+}
+.text-1 {
+	font-size: 2rem;
+}
+.text-2 {
+	font-size: 1.5rem;
+}
+.colored {
+	background-image: linear-gradient(to right, #eb3293, #fabb52);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+.flex {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.item {
+	margin: 2rem 1rem;
+}
+.post {
+	position: relative;
+}
+.post .handle {
+	cursor: pointer;
+}
+.post .handle:hover {
+	text-decoration: underline;
+}
+.post .body {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+}
+.post .spacer {
+	height: 1rem;
+}
+.post .dot {
+	margin-right: 0.25rem;
+}
+.post .dot svg {
+	width: 0.7rem;
+	height: 0.7rem;
+	cursor: pointer;
+}
+.post .dot:hover svg {
+	transform: scale(1.5);
+	transition: transform 0.4s ease-out;
+}
+.post .dot svg circle {
+	fill: var(--gray);
+}
+.post .dot.mine svg circle {
+	fill: var(--text);
+}
+.post .dot.mentioned svg circle {
+	fill: var(--red);
+}
+.post .dot .popover {
+	display: none;
+	position: absolute;
+	left: 1.2rem;
+	top: 0.2rem;
+	background: var(--light2);
+	border-radius: 0.2rem;
+	box-shadow: 1px 1px 2px 0px var(--light2);
+}
+.post .dot .popover:before {
+	content: "";
+	height: 0px;
+	width: 0px;
+	border-top: 0.3rem solid transparent;
+	border-bottom: 0.3rem solid transparent;
+	border-right: 0.3rem solid var(--light2);
+	position: absolute;
+	top: 0.25rem;
+	left: -0.3rem;
+	display: block;
+}
+.post .dot:focus-within .popover {
+	display: block;
+}
+.post .dot .popover span,
+.post .dot .popover a {
+	padding: 0px 0.5rem;
+	border-right: 1px solid var(--light1);
+	text-decoration: none;
+}
+.animate {
+	animation-duration: 0.5s;
+	animation-fill-mode: both;
+	animation-name: fadeInDown;
+}
+
+#app {
+	display: none;
+}
+#toast {
+	position: fixed;
+	inset: 0px 0px auto;
+	padding: 0.75rem;
+	text-align: center;
+	background: var(--text);
+	color: var(--background);
+	z-index: 50;
+}
+#toast.error {
+	background: var(--red);
+}
+#toast.success {
+	background: var(--green);
+}
+#intro {
+	margin-top: 10vh;
+}
+#introCTA {
+	margin-bottom: 0.5rem;
+}
+#loader {
+	width: 3rem;
+	margin: calc(30vh - 1.5rem) auto 0px;
+}
+#login {
+	position: fixed;
+	inset: 0px;
+	background: var(--background);
+	margin: 0px;
+}
+#login .wrap {
+	width: 100%;
+	max-width: 360px;
+	margin: auto;
+	padding: 3rem 0px 0px;
+}
+#login #closeLogin {
+	float: right;
+	text-decoration: none;
+	line-height: 2rem;
+	padding: 1rem;
+}
+#login #passwordwrap {
+	position: relative;
+}
+#login input,
+#login button {
+	margin: 1rem;
+	padding: 0.75rem 1rem;
+	width: calc(100% - 2rem);
+	box-sizing: border-box;
+}
+#login #showpass {
+	position: absolute;
+	right: 1.8rem;
+	top: 0.35rem;
+	font-size: 1.5rem;
+	cursor: pointer;
+	opacity: 0.8;
+}
+#noposts {
+	margin-top: 5rem;
+}
+#header {
+	margin-bottom: 0.5rem;
+}
+#header #menuBtn {
+	text-decoration: none;
+	width: 2rem;
+	height: 2rem;
+	text-align: center;
+	line-height: 2rem;
+	display: inline-block;
+	border-radius: 50%;
+}
+#header #menuBtn:hover {
+	background: var(--light2);
+}
+#sharebox {
+	position: relative;
+}
+#sharebox #placeholder {
+	position: absolute;
+	z-index: 5;
+	opacity: 0.5;
+}
+#sharebox #sharefield {
+	position: relative;
+	z-index: 10;
+}
+#settingswrap {
+	position: fixed;
+	inset: 0px;
+	z-index: 11;
+	overflow: auto;
+}
+#blanket {
+	position: absolute;
+	inset: 0px;
+	background: var(--text);
+	opacity: 0.5;
+	z-index: 15;
+}
+#settings {
+	background: var(--background);
+	position: relative;
+	inset: 6rem auto auto;
+	z-index: 20;
+	border-radius: 0.5rem;
+	max-width: 480px;
+	margin: auto;
+	box-shadow: 1px 1px 8px 0px var(--gray);
+}
+#settings .item {
+	display: block;
+	margin: 0px;
+	padding: 1rem;
+	border-bottom: 1px solid var(--light1);
+	text-decoration: none;
+}
+#settings .item:first-child {
+	border-top-left-radius: 0.5rem;
+	border-top-right-radius: 0.5rem;
+}
+#settings .item:last-child {
+	border-bottom-left-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+}
+#settings .item.link {
+	cursor: pointer;
+}
+#settings .item.link:hover {
+	background: var(--light1);
+}
+#settings input {
+	padding: 0.1rem 0.5rem;
+	margin-right: 0.5rem;
+}
+#settings .paswwordWrap {
+	justify-content: unset;
+}
+@keyframes fadeInDown {
+	from {
+		opacity: 0;
+		-webkit-transform: translate3d(0, -2rem, 0);
+		transform: translate3d(0, -2rem, 0);
+	}
+
+	to {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
+	}
+}

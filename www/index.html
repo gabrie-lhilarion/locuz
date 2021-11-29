@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" tabindex="0">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Cache-control" content="public" />
+		<meta
+			name="viewport"
+			content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
+		/>
+		<meta name="description" content="Connect with people nearby you." />
+		<meta name="keywords" content="proximity-based social network, location-based social network, Yik Yak" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<!-- Icons & Theme-->
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="icon" href="favicon.svg" />
+		<link rel="mask-icon" href="mask-icon.svg" color="#262626" />
+		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+		<link rel="manifest" href="manifest.json" />
+		<link type="text/plain" rel="author" href="humans.txt" />
+
+		<!-- Meta data for link fetching -->
+		<meta property="og:url" content="https://locuz.app" />
+		<meta property="og:image" content="https://locuz.app/icon.png" />
+		<meta property="og:title" content="Locuz" />
+		<meta property="og:description" content="Connect with people nearby you." />
+
+		<title>Locuz</title>
+
+		<!-- The core Firebase JS SDK is always required and must be listed first -->
+		<script defer src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app-compat.js"></script>
+		<script defer src="https://www.gstatic.com/firebasejs/9.4.0/firebase-messaging-compat.js"></script>
+		<script defer src="vue.min.js"></script>
+		<script defer src="axios.min.js"></script>
+		<script defer src="script.js"></script>
+		<!-- Site scripts & styles -->
+		<link href="style.css" rel="stylesheet" />
+		<!-- 100% privacy friendly analytics -->
+		<script async defer src="https://analytics.locuz.app/hello.js"></script>
+	</head>
+
+	<body>
+		<main id="app" v-bind:style="'display:block'">
+			<div class="container">
+				<div id="toast" v-if="toast.message" v-bind:class="toast.type" v-on:click="toast.message = ''">
+					{{toast.message}}
+				</div>
+
+				<section id="intro" v-if="!token">
+					<div class="text-2 item">
+						<span class="bold colored">Locuz</span> is a location-based social app that lets you connect with people
+						nearby you or within a radius.
+					</div>
+					<div class="item" v-if="!locating && !fetchingPosts && !initFetchCompleted">
+						<button id="introCTA" data-cabin-event="location-btn-cicked" v-on:click="init">Show nearby posts</button>
+						<div class="small gray">
+							<span>By proceeding you agree to our <a href="terms.html">terms</a></span>
+						</div>
+					</div>
+				</section>
+
+				<section v-if="locationError">
+					<div class="spacer"></div>
+					<div class="item text-2 red">Unable to get your location</div>
+					<a href="javascript:void(0)" class="bold item" v-on:click="init">Retry</a>
+				</section>
+
+				<button
+					class="full-width bold"
+					v-if="!token && geoLocation && initFetchCompleted"
+					v-on:click="showLogin = true"
+				>
+					{{posts.length > 0 ? "Join the" : "Start a"}} conversation
+				</button>
+
+				<header class="item" v-if="token && geoLocation">
+					<div id="header" class="flex">
+						<span class="text-1 bold colored">{{(showMentions ? "@" : "") + handle}}</span>
+						<a href="javascript:void(0)" id="menuBtn" v-on:click="showSettings = true">&#x25BC;</a>
+					</div>
+					<div id="sharebox" class="text-2">
+						<div id="placeholder" v-if="newPost.length <= 0">Share something here...</div>
+						<div
+							id="sharefield"
+							v-bind:class="newPost.length > 160 ? 'red' : ''"
+							contenteditable="true"
+							v-on:input="setNewPostText($event)"
+							v-on:keydown.enter="submitPost"
+							v-on:paste="paste($event)"
+						></div>
+					</div>
+				</header>
+
+				<section id="posts" v-if="posts.length > 0">
+					<div class="post item" v-for="(post, i) in posts" v-bind:key="post._id">
+						<span
+							class="dot"
+							v-bind:class="post.mentions.includes(handle) ? 'mentioned' : handle === post.from.handle ? 'mine' : ''"
+							v-bind:tabindex="i"
+						>
+							<svg viewBox="0 0 10 10">
+								<circle cx="5" cy="5" r="5" />
+							</svg>
+							<span class="popover small">
+								<span>{{formatDate(post.date)}}</span>
+								<span>{{formatDistance(post.distance)}}</span>
+								<a
+									href="javascript:void(0)"
+									v-if="post.from.handle === handle"
+									class="red"
+									v-on:click="deletePost(post._id)"
+									>Delete</a
+								>
+							</span>
+						</span>
+						<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)"
+							>{{post.from.handle}}</span
+						>
+						<span class="body" v-html="linkify(post.text)"></span>
+					</div>
+				</section>
+				<section id="noposts" v-if="initFetchCompleted && posts.length <= 0">
+					<div class="item center gray">
+						No posts here.<br />
+						<span class="small" v-if="token">Try increasing the radius</span
+						><span class="small" v-if="!token">Login to increase the radius</span>
+					</div>
+				</section>
+
+				<section id="loader" v-if="locating || (fetchingPosts && !initFetchCompleted)">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+						<defs>
+							<linearGradient id="color">
+								<stop offset="0%" stop-color="#EB3293">
+									<animate
+										attributeName="stop-color"
+										values="#EB3293; #FABB52; #EB3293;"
+										dur="1s"
+										repeatCount="indefinite"
+									/>
+								</stop>
+								<stop offset="100%" stop-color="#FABB52">
+									<animate
+										attributeName="stop-color"
+										values="#FABB52; #EB3293; #FABB52;"
+										dur="1s"
+										repeatCount="indefinite"
+									/>
+								</stop>
+							</linearGradient>
+						</defs>
+						<path
+							fill="url(#color)"
+							fill-rule="evenodd"
+							d="M 24.00,9.00 C 15.72,9.00 9.00,15.72 9.00,24.00 9.00,32.28 15.72,39.00 24.00,39.00 32.28,39.00 39.00,32.28 39.00,24.00 39.00,15.72 32.28,9.00 24.00,9.00 Z M 24.00,15.00 C 19.03,15.00 15.00,19.03 15.00,24.00 15.00,28.97 19.03,33.00 24.00,33.00 28.97,33.00 33.00,28.97 33.00,24.00 33.00,19.03 28.97,15.00 24.00,15.00 Z"
+						/>
+					</svg>
+				</section>
+
+				<button class="full-width bold" v-if="showLoadMore" v-on:click="getPosts()">Load more</button>
+
+				<section id="login" class="item animate" v-if="showLogin">
+					<a href="javascript:void(0)" id="closeLogin" class="text-1" v-on:click="showLogin = false">&times;</a>
+					<div class="wrap">
+						<div class="text-1 item">Join the conversation</div>
+						<input type="text" v-model="authCredentials.handle" placeholder="Handle / Username" />
+						<div id="passwordwrap">
+							<input
+								v-bind:type="showPassword ? 'text' : 'password'"
+								v-model="authCredentials.password"
+								placeholder="Password"
+							/>
+							<span id="showpass" class="gray" v-if="authCredentials.password" v-on:click="showPassword = !showPassword"
+								>&#9728;</span
+							>
+						</div>
+						<button class="bold" v-on:click="login">Log in</button>
+						<div class="light center">or</div>
+						<button class="bold ghost" v-on:click="register">Register</button>
+					</div>
+				</section>
+
+				<section id="settingswrap" v-if="showSettings">
+					<div id="blanket" v-on:click="showSettings = false"></div>
+					<div id="settings" class="animate">
+						<div class="item link" v-on:click="onFeedChange()">
+							<div class="bold">Nearby posts</div>
+							<div>See your posts & posts within a radius.</div>
+						</div>
+						<div class="item link" v-on:click="onFeedChange('mentions')">
+							<div class="bold">Mentions & replies</div>
+							<div>See your posts, @mentions & replies.</div>
+						</div>
+						<div class="item flex space-between">
+							<div class="bold">Radius (in KM)</div>
+							<input
+								type="number"
+								min="1"
+								max="10000"
+								size="5"
+								class="center"
+								v-model="radius"
+								v-on:change="updateRadius"
+							/>
+						</div>
+						<div class="item">
+							<div class="bold">Password</div>
+							<div class="flex paswwordWrap">
+								<input type="password" v-model="newPassword" placeholder="New password" />
+								<a href="javascript:void(0)" class="bold" v-on:click="updatePassword">Update</a>
+							</div>
+						</div>
+
+						<div class="item link red bold" v-on:click="logout">
+							Log out
+						</div>
+						<a class="item link" href="mailto:vasanth@locuz.app">For any queries, contact us</a>
+					</div>
+				</section>
+			</div>
+		</main>
+	</body>
+</html>
