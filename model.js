@@ -8,7 +8,6 @@ const { Users, Posts } = require("./database").getInstance();
 
 const fcmadmin = require("firebase-admin");
 if (config.FCM_SERVICE_ACCOUNT) {
-	console.log(config.FCM_SERVICE_ACCOUNT);
 	fcmadmin.initializeApp({
 		credential: fcmadmin.credential.cert(JSON.parse(config.FCM_SERVICE_ACCOUNT)),
 	});

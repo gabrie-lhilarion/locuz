@@ -3,19 +3,9 @@ const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 
-const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
-
 const config = require("./config");
 const model = require("./model");
 const utils = require("./utils");
-
-if (config.ENABLE_SENTRY) {
-	Sentry.init({
-		dsn: "https://47435644f0b043acaa682433e99affff@o717246.ingest.sentry.io/5779791",
-		tracesSampleRate: 0.5,
-	});
-}
 
 const app = express();
 app.set("trust proxy", true);

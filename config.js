@@ -4,7 +4,6 @@ module.exports = {
 	PAGE_LIMIT: process.env.PAGE_LIMIT || 50,
 	SECRET: process.env.SECRET || "l0cuz",
 	FCM_SERVICE_ACCOUNT: process.env.FCM_SERVICE_ACCOUNT,
-	ENABLE_SENTRY: !!process.env.ENABLE_SENTRY,
 	INVALID_HANDLES: [
 		"bot",
 		"home",
