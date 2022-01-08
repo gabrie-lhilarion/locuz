@@ -7,9 +7,12 @@ const config = require("./config");
 const { Users, Posts } = require("./database").getInstance();
 
 const fcmadmin = require("firebase-admin");
-fcmadmin.initializeApp({
-	credential: fcmadmin.credential.cert(require(config.FCM_SERVICE_ACC_KEY_PATH)),
-});
+if (config.FCM_SERVICE_ACCOUNT) {
+	console.log(config.FCM_SERVICE_ACCOUNT);
+	fcmadmin.initializeApp({
+		credential: fcmadmin.credential.cert(JSON.parse(config.FCM_SERVICE_ACCOUNT)),
+	});
+}
 
 const register = async (req, res, next) => {
 	try {
@@ -115,37 +118,39 @@ const newPost = async (req, res, next) => {
 		const post = await new Posts(newPostObject).save();
 		res.json({ ...utils.postFormatter({ ...post, from: req.user }, location) });
 
-		//send push notifications to mentioned users
-		if (mentions.length > 0) {
-			mentions.forEach((m) => {
-				if (m.deviceToken) {
-					fcmadmin.messaging().send({
-						data: { title: "@" + req.user.handle + " mentioned you", body: text },
-						token: m.deviceToken,
-					});
-				}
-			});
-		}
-		//send push notifications to near by users
-		const nearByUsersWithToken = await Users.find(
-			{
-				_id: { $ne: req.user._id },
-				handle: { $nin: mentions.map((m) => m.handle) },
-				deviceToken: { $exists: true },
-				location: {
-					$geoWithin: {
-						$centerSphere: [location, 10 / 6371],
+		if (config.FCM_SERVICE_ACCOUNT) {
+			//send push notifications to mentioned users
+			if (mentions.length > 0) {
+				mentions.forEach((m) => {
+					if (m.deviceToken) {
+						fcmadmin.messaging().send({
+							data: { title: "@" + req.user.handle + " mentioned you", body: text },
+							token: m.deviceToken,
+						});
+					}
+				});
+			}
+			//send push notifications to near by users
+			const nearByUsersWithToken = await Users.find(
+				{
+					_id: { $ne: req.user._id },
+					handle: { $nin: mentions.map((m) => m.handle) },
+					deviceToken: { $exists: true },
+					location: {
+						$geoWithin: {
+							$centerSphere: [location, 10 / 6371],
+						},
 					},
 				},
-			},
-			["deviceToken"]
-		).exec();
-		nearByUsersWithToken.forEach((u) => {
-			fcmadmin.messaging().send({
-				data: { title: "@" + req.user.handle + " posted near you", body: text },
-				token: u.deviceToken,
+				["deviceToken"]
+			).exec();
+			nearByUsersWithToken.forEach((u) => {
+				fcmadmin.messaging().send({
+					data: { title: "@" + req.user.handle + " posted near you", body: text },
+					token: u.deviceToken,
+				});
 			});
-		});
+		}
 	} catch (error) {
 		next(error);
 	}

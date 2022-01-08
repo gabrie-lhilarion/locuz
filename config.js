@@ -3,7 +3,7 @@ module.exports = {
 	MONGO_URL: process.env.MONGO_URL || "mongodb://localhost:27017/locuz-dev",
 	PAGE_LIMIT: process.env.PAGE_LIMIT || 50,
 	SECRET: process.env.SECRET || "l0cuz",
-	FCM_SERVICE_ACC_KEY_PATH: require("path").join(__dirname, "./firebase.json"),
+	FCM_SERVICE_ACCOUNT: process.env.FCM_SERVICE_ACCOUNT,
 	ENABLE_SENTRY: !!process.env.ENABLE_SENTRY,
 	INVALID_HANDLES: [
 		"bot",
