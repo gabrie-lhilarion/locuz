@@ -15,7 +15,6 @@ module.exports = {
 		"privacy",
 		"replies",
 		"mentions",
-		"vasanthv",
 		"locuzapp",
 		"administrator",
 	],

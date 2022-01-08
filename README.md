@@ -6,6 +6,7 @@ A location-based social app.
 
 - Node.js 8.x or above
 - NPM
+- MongoDb 2.6 or above
 
 ### How to Build this app locally
 
@@ -15,7 +16,7 @@ A location-based social app.
 git clone https://github.com/<your_name>/locuz.git
 ```
 
-`cd locuz` and then install dependencies
+`cd locuz` and then install dependencies. Make sure MongoDb is running and the correct URL is added to `config.js`.
 
 ```
 npm install
