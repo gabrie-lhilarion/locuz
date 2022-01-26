@@ -115,10 +115,11 @@ const App = new Vue({
 		onAuthSuccess: function(response) {
 			window.localStorage.token = this.token = response.data.token;
 			window.localStorage.handle = this.handle = response.data.handle;
-			this.messages = [];
+			axios.defaults.headers.common["Authorization"] = "TOKEN " + response.data.token;
+			this.initFetchCompleted = false;
+			this.posts = [];
 			this.getPosts();
 			this.showLogin = false;
-			axios.defaults.headers.common["Authorization"] = "TOKEN " + response.data.token;
 		},
 		submitPost: function(e) {
 			e.preventDefault();
@@ -159,12 +160,14 @@ const App = new Vue({
 			}, 10000);
 		},
 		deletePost: function(id) {
-			axios.delete("/api/post/" + id).then(() =>
-				this.posts.splice(
-					this.posts.findIndex((m) => m._id == id),
-					1
-				)
-			);
+			if (confirm("Are you sure you want to delete this post? ")) {
+				axios.delete("/api/post/" + id).then(() =>
+					this.posts.splice(
+						this.posts.findIndex((m) => m._id == id),
+						1
+					)
+				);
+			}
 		},
 		onFeedChange: function(type) {
 			this.showMentions = type === "mentions" ? true : false;
@@ -241,17 +244,15 @@ const App = new Vue({
 			});
 		},
 		logout: function() {
-			if (confirm("Are you sure you want to sign out?")) {
-				axios.delete("/api/logout").then(() => {
-					window.localStorage.token = "";
-					window.localStorage.handle = "";
-					window.localStorage.radius = 10;
-					delete axios.defaults.headers.common["Authorization"];
-					const newState = defaultState();
-					Object.keys(newState).map((key) => (this[key] = newState[key]));
-					this.init();
-				});
-			}
+			axios.delete("/api/logout").then(() => {
+				window.localStorage.token = "";
+				window.localStorage.handle = "";
+				window.localStorage.radius = 10;
+				delete axios.defaults.headers.common["Authorization"];
+				const newState = defaultState();
+				Object.keys(newState).map((key) => (this[key] = newState[key]));
+				this.init();
+			});
 		},
 	},
 });

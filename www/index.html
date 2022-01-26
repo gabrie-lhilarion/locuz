@@ -54,14 +54,20 @@
 						nearby you or within a radius.
 					</div>
 				</div>
+
 				<div id="handle" class="item" v-if="token && handle">
 					<span class="colored" v-on:click="showSettings = true">{{handle}}</span>
 				</div>
+
 				<div class="item center small gray" v-if="locating || (fetchingPosts && !initFetchCompleted)">
 					Loading. Please wait...
 				</div>
 
-				<section class="bg-transparent curved">
+				<div v-if="!online" id="offline" class="bg-transparent curved item center text-2 gray">
+					App is offline.
+				</div>
+
+				<section class="bg-transparent curved" v-if="online">
 					<button
 						class="full-width bold"
 						v-if="!token && geoLocation && initFetchCompleted"
@@ -87,20 +93,21 @@
 							<div class="post item" v-for="(post, i) in posts" v-bind:key="post._id">
 								<div class="flex">
 									<div>
-										<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)"
-											>{{post.from.handle}}</span
+										<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)">
+											{{post.mentions.includes(handle) ? "🔥" : post.from.handle === handle ? "👤" : "📍"}}
+											{{post.from.handle}}</span
 										>&nbsp;
 										<span class="gray small">{{formatDate(post.date)}}</span>
 									</div>
 									<div>
+										<span class="gray small">{{formatDistance(post.distance)}}</span>
 										<a
 											href="javascript:void(0)"
 											v-if="post.from.handle === handle"
-											class="small red"
+											class="small"
 											v-on:click="deletePost(post._id)"
-											>Delete</a
+											>🗑️</a
 										>
-										<span class="gray small">{{formatDistance(post.distance)}}</span>
 									</div>
 								</div>
 								<div class="body" v-html="linkify(post.text)"></div>
@@ -123,7 +130,7 @@
 				<section id="login" class="item animate" v-if="showLogin">
 					<a href="javascript:void(0)" id="closeLogin" class="text-1" v-on:click="showLogin = false">&times;</a>
 					<div class="wrap">
-						<div class="text-1 item">Join the conversation</div>
+						<div class="text-1 item">Join Locuz</div>
 						<input type="text" v-model="authCredentials.handle" placeholder="Handle / Username" />
 						<div id="passwordwrap">
 							<input
