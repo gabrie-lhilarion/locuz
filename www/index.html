@@ -93,8 +93,8 @@
 							<div class="post item" v-for="(post, i) in posts" v-bind:key="post._id">
 								<div class="flex">
 									<div>
+										<span>{{post.mentions.includes(handle) ? "🔥" : post.from.handle === handle ? "👤" : "📍"}}</span>
 										<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)">
-											{{post.mentions.includes(handle) ? "🔥" : post.from.handle === handle ? "👤" : "📍"}}
 											{{post.from.handle}}</span
 										>&nbsp;
 										<span class="gray small">{{formatDate(post.date)}}</span>
