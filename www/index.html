@@ -67,7 +67,7 @@
 					App is offline.
 				</div>
 
-				<section class="bg-transparent curved" v-if="online">
+				<section class="bg-transparent curved" v-if="online && !(fetchingPosts && !initFetchCompleted)">
 					<button
 						class="full-width bold"
 						v-if="!token && geoLocation && initFetchCompleted"
