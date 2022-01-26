@@ -48,39 +48,29 @@
 					{{toast.message}}
 				</div>
 
-				<section id="intro" v-if="!token">
+				<div id="intro" v-if="!token">
 					<div class="text-2 item">
 						<span class="bold colored">Locuz</span> is a location-based social app that lets you connect with people
 						nearby you or within a radius.
 					</div>
-					<div class="item" v-if="!locating && !fetchingPosts && !initFetchCompleted">
-						<button id="introCTA" data-cabin-event="location-btn-cicked" v-on:click="init">Show nearby posts</button>
-						<div class="small gray">
-							<span>By proceeding you agree to our <a href="terms.html">terms</a></span>
-						</div>
-					</div>
-				</section>
+				</div>
+				<div id="handle" class="item" v-if="token && handle">
+					<span class="colored" v-on:click="showSettings = true">{{handle}}</span>
+				</div>
+				<div class="item center small gray" v-if="locating || (fetchingPosts && !initFetchCompleted)">
+					Loading. Please wait...
+				</div>
 
-				<section v-if="locationError">
-					<div class="spacer"></div>
-					<div class="item text-2 red">Unable to get your location</div>
-					<a href="javascript:void(0)" class="bold item" v-on:click="init">Retry</a>
-				</section>
+				<section class="bg-transparent curved">
+					<button
+						class="full-width bold"
+						v-if="!token && geoLocation && initFetchCompleted"
+						v-on:click="showLogin = true"
+					>
+						{{posts.length > 0 ? "Join the" : "Start a"}} conversation
+					</button>
 
-				<button
-					class="full-width bold"
-					v-if="!token && geoLocation && initFetchCompleted"
-					v-on:click="showLogin = true"
-				>
-					{{posts.length > 0 ? "Join the" : "Start a"}} conversation
-				</button>
-
-				<header class="item" v-if="token && geoLocation">
-					<div id="header" class="flex">
-						<span class="text-1 bold colored">{{(showMentions ? "@" : "") + handle}}</span>
-						<a href="javascript:void(0)" id="menuBtn" v-on:click="showSettings = true">&#x25BC;</a>
-					</div>
-					<div id="sharebox" class="text-2">
+					<div id="sharebox" class="text-2 item" v-if="token && geoLocation">
 						<div id="placeholder" v-if="newPost.length <= 0">Share something here...</div>
 						<div
 							id="sharefield"
@@ -91,75 +81,44 @@
 							v-on:paste="paste($event)"
 						></div>
 					</div>
-				</header>
 
-				<section id="posts" v-if="posts.length > 0">
-					<div class="post item" v-for="(post, i) in posts" v-bind:key="post._id">
-						<span
-							class="dot"
-							v-bind:class="post.mentions.includes(handle) ? 'mentioned' : handle === post.from.handle ? 'mine' : ''"
-							v-bind:tabindex="i"
-						>
-							<svg viewBox="0 0 10 10">
-								<circle cx="5" cy="5" r="5" />
-							</svg>
-							<span class="popover small">
-								<span>{{formatDate(post.date)}}</span>
-								<span>{{formatDistance(post.distance)}}</span>
-								<a
-									href="javascript:void(0)"
-									v-if="post.from.handle === handle"
-									class="red"
-									v-on:click="deletePost(post._id)"
-									>Delete</a
-								>
-							</span>
-						</span>
-						<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)"
-							>{{post.from.handle}}</span
-						>
-						<span class="body" v-html="linkify(post.text)"></span>
-					</div>
-				</section>
-				<section id="noposts" v-if="initFetchCompleted && posts.length <= 0">
-					<div class="item center gray">
-						No posts here.<br />
-						<span class="small" v-if="token">Try increasing the radius</span
-						><span class="small" v-if="!token">Login to increase the radius</span>
-					</div>
-				</section>
+					<section class="bg-transparent curved">
+						<section id="posts" v-if="posts.length > 0">
+							<div class="post item" v-for="(post, i) in posts" v-bind:key="post._id">
+								<div class="flex">
+									<div>
+										<span class="bold handle" v-on:click="setMentions(post.mentions, post.from.handle)"
+											>{{post.from.handle}}</span
+										>&nbsp;
+										<span class="gray small">{{formatDate(post.date)}}</span>
+									</div>
+									<div>
+										<a
+											href="javascript:void(0)"
+											v-if="post.from.handle === handle"
+											class="small red"
+											v-on:click="deletePost(post._id)"
+											>Delete</a
+										>
+										<span class="gray small">{{formatDistance(post.distance)}}</span>
+									</div>
+								</div>
+								<div class="body" v-html="linkify(post.text)"></div>
+							</div>
+						</section>
 
-				<section id="loader" v-if="locating || (fetchingPosts && !initFetchCompleted)">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-						<defs>
-							<linearGradient id="color">
-								<stop offset="0%" stop-color="#EB3293">
-									<animate
-										attributeName="stop-color"
-										values="#EB3293; #FABB52; #EB3293;"
-										dur="1s"
-										repeatCount="indefinite"
-									/>
-								</stop>
-								<stop offset="100%" stop-color="#FABB52">
-									<animate
-										attributeName="stop-color"
-										values="#FABB52; #EB3293; #FABB52;"
-										dur="1s"
-										repeatCount="indefinite"
-									/>
-								</stop>
-							</linearGradient>
-						</defs>
-						<path
-							fill="url(#color)"
-							fill-rule="evenodd"
-							d="M 24.00,9.00 C 15.72,9.00 9.00,15.72 9.00,24.00 9.00,32.28 15.72,39.00 24.00,39.00 32.28,39.00 39.00,32.28 39.00,24.00 39.00,15.72 32.28,9.00 24.00,9.00 Z M 24.00,15.00 C 19.03,15.00 15.00,19.03 15.00,24.00 15.00,28.97 19.03,33.00 24.00,33.00 28.97,33.00 33.00,28.97 33.00,24.00 33.00,19.03 28.97,15.00 24.00,15.00 Z"
-						/>
-					</svg>
-				</section>
+						<section id="noposts" v-if="initFetchCompleted && posts.length <= 0">
+							<div class="item center gray">
+								No posts here.<br />
+								<span class="small" v-if="token">Try increasing the radius</span
+								><span class="small" v-if="!token">Login to increase the radius</span>
+							</div>
+						</section>
 
-				<button class="full-width bold" v-if="showLoadMore" v-on:click="getPosts()">Load more</button>
+						<button class="full-width bold" v-if="showLoadMore" v-on:click="getPosts()">Load more</button>
+					</section>
+				</section>
+				<div class="spacer"></div>
 
 				<section id="login" class="item animate" v-if="showLogin">
 					<a href="javascript:void(0)" id="closeLogin" class="text-1" v-on:click="showLogin = false">&times;</a>
@@ -171,14 +130,21 @@
 								v-bind:type="showPassword ? 'text' : 'password'"
 								v-model="authCredentials.password"
 								placeholder="Password"
+								v-on:keydown.enter="login"
 							/>
-							<span id="showpass" class="gray" v-if="authCredentials.password" v-on:click="showPassword = !showPassword"
-								>&#9728;</span
+							<span
+								id="showpass"
+								class="gray"
+								v-if="authCredentials.password"
+								v-on:click="showPassword = !showPassword"
 							>
+								&#9728;
+							</span>
 						</div>
 						<button class="bold" v-on:click="login">Log in</button>
 						<div class="light center">or</div>
 						<button class="bold ghost" v-on:click="register">Register</button>
+						<div class="small gray center">By proceeding you agree to our <a href="terms.html">terms</a></div>
 					</div>
 				</section>
 
@@ -186,15 +152,13 @@
 					<div id="blanket" v-on:click="showSettings = false"></div>
 					<div id="settings" class="animate">
 						<div class="item link" v-on:click="onFeedChange()">
-							<div class="bold">Nearby posts</div>
-							<div>See your posts & posts within a radius.</div>
+							<div class="semibold">Nearby posts</div>
 						</div>
 						<div class="item link" v-on:click="onFeedChange('mentions')">
-							<div class="bold">Mentions & replies</div>
-							<div>See your posts, @mentions & replies.</div>
+							<div class="semibold">Mentions & replies</div>
 						</div>
 						<div class="item flex space-between">
-							<div class="bold">Radius (in KM)</div>
+							<div class="semibold">Radius (in KM)</div>
 							<input
 								type="number"
 								min="1"
@@ -205,12 +169,9 @@
 								v-on:change="updateRadius"
 							/>
 						</div>
-						<div class="item">
-							<div class="bold">Password</div>
-							<div class="flex paswwordWrap">
-								<input type="password" v-model="newPassword" placeholder="New password" />
-								<a href="javascript:void(0)" class="bold" v-on:click="updatePassword">Update</a>
-							</div>
+						<div class="item flex">
+							<input type="password" v-model="newPassword" placeholder="New password" />
+							<a href="javascript:void(0)" class="semibold" v-on:click="updatePassword">Update</a>
 						</div>
 
 						<div class="item link red bold" v-on:click="logout">

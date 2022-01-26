@@ -4,8 +4,7 @@ const defaultState = function() {
 	return {
 		online: true,
 		visible: true,
-		locating: false,
-		locationError: false,
+		locating: true,
 		geoLocation: null,
 		showLogin: false,
 		showPassword: false,
@@ -43,7 +42,7 @@ const App = new Vue({
 			this.getCurrentLocation()
 				.then(this.setLocation)
 				.catch(() => {
-					this.locationError = true;
+					this.setToast("Unable to get your location");
 				})
 				.finally(() => (this.locating = false));
 		},
@@ -77,7 +76,6 @@ const App = new Vue({
 			}, 4000);
 		},
 		setLocation: function({ coords }) {
-			this.locationError = false;
 			cabin.event(`location-success${this.handle ? "/" + this.handle : ""}`);
 			const { latitude, longitude } = coords;
 			this.geoLocation = { latitude, longitude };
@@ -251,6 +249,7 @@ const App = new Vue({
 					delete axios.defaults.headers.common["Authorization"];
 					const newState = defaultState();
 					Object.keys(newState).map((key) => (this[key] = newState[key]));
+					this.init();
 				});
 			}
 		},
@@ -318,7 +317,6 @@ if ("serviceWorker" in navigator) {
 }
 if (window.localStorage.token) {
 	axios.defaults.headers.common["Authorization"] = "TOKEN " + window.localStorage.token;
-	App.init();
 }
 axios.interceptors.response.use(
 	(response) => response,
@@ -331,3 +329,5 @@ axios.interceptors.response.use(
 		throw error;
 	}
 );
+
+setTimeout(App.init, 1000);

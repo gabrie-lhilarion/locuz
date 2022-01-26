@@ -1,11 +1,14 @@
 :root {
-	--background: #ffffff;
-	--light1: #f8f8f8;
-	--light2: #efefef;
+	--white: #ffffff;
+	--background: #e7ecf0;
+	--background-trans: rgba(255, 255, 255, 0.7);
+	--light: #f6f6f6;
 	--text: #262626;
 	--gray: #888888;
 	--green: #2ecc71;
 	--red: #e74c3c;
+	--brand-color-1: #eb3293;
+	--brand-color-2: #fabb52;
 }
 * {
 	outline: 0;
@@ -22,7 +25,6 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	line-height: 1.6;
-	transition: background 0.5s;
 }
 a {
 	color: inherit;
@@ -40,21 +42,21 @@ button {
 	border: 2px solid var(--text);
 }
 button.full-width {
-	background: var(--light1);
-	border-top: 1px solid var(--light2);
-	border-bottom: 1px solid var(--light2);
+	background: none;
+	border-top: 0px;
+	border-bottom: 1px solid var(--light);
 	border-left: none;
 	border-right: none;
-	border-radius: 0px;
 	color: var(--text);
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
+	padding: 1rem;
 }
 input[type="text"],
 input[type="number"],
 input[type="password"] {
-	background: var(--light2);
+	background: var(--light);
 	color: var(--text);
 	display: block;
 	border: none;
@@ -65,7 +67,7 @@ input[type="password"] {
 	box-sizing: border-box;
 }
 button.ghost {
-	background: var(--background);
+	background: var(--white);
 	color: var(--text);
 }
 input::-webkit-outer-spin-button,
@@ -81,17 +83,29 @@ input::placeholder {
 	max-width: 680px;
 	margin-inline: auto;
 }
+.bg-transparent {
+	background: var(--background-trans);
+}
 .gray {
 	color: var(--gray);
 }
 .red {
 	color: var(--red);
 }
+.colored {
+	background-image: linear-gradient(to right, #eb3293, #fabb52);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
 .small {
 	font-size: 0.75rem;
 }
 .thin {
 	font-weight: 300;
+}
+.semibold {
+	font-weight: 500;
 }
 .bold {
 	font-weight: bold;
@@ -100,16 +114,13 @@ input::placeholder {
 	text-align: center;
 }
 .text-1 {
-	font-size: 2rem;
+	font-size: 1.8rem;
 }
 .text-2 {
 	font-size: 1.5rem;
 }
-.colored {
-	background-image: linear-gradient(to right, #eb3293, #fabb52);
-	background-clip: text;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+.curved {
+	border-radius: 1rem;
 }
 .flex {
 	display: flex;
@@ -117,10 +128,10 @@ input::placeholder {
 	align-items: center;
 }
 .item {
-	margin: 2rem 1rem;
+	padding: 1rem;
 }
 .post {
-	position: relative;
+	border-bottom: 1px solid var(--light);
 }
 .post .handle {
 	cursor: pointer;
@@ -132,60 +143,6 @@ input::placeholder {
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 	word-break: break-word;
-}
-.post .spacer {
-	height: 1rem;
-}
-.post .dot {
-	margin-right: 0.25rem;
-}
-.post .dot svg {
-	width: 0.7rem;
-	height: 0.7rem;
-	cursor: pointer;
-}
-.post .dot:hover svg {
-	transform: scale(1.5);
-	transition: transform 0.4s ease-out;
-}
-.post .dot svg circle {
-	fill: var(--gray);
-}
-.post .dot.mine svg circle {
-	fill: var(--text);
-}
-.post .dot.mentioned svg circle {
-	fill: var(--red);
-}
-.post .dot .popover {
-	display: none;
-	position: absolute;
-	left: 1.2rem;
-	top: 0.2rem;
-	background: var(--light2);
-	border-radius: 0.2rem;
-	box-shadow: 1px 1px 2px 0px var(--light2);
-}
-.post .dot .popover:before {
-	content: "";
-	height: 0px;
-	width: 0px;
-	border-top: 0.3rem solid transparent;
-	border-bottom: 0.3rem solid transparent;
-	border-right: 0.3rem solid var(--light2);
-	position: absolute;
-	top: 0.25rem;
-	left: -0.3rem;
-	display: block;
-}
-.post .dot:focus-within .popover {
-	display: block;
-}
-.post .dot .popover span,
-.post .dot .popover a {
-	padding: 0px 0.5rem;
-	border-right: 1px solid var(--light1);
-	text-decoration: none;
 }
 .animate {
 	animation-duration: 0.5s;
@@ -212,19 +169,12 @@ input::placeholder {
 	background: var(--green);
 }
 #intro {
-	margin-top: 10vh;
-}
-#introCTA {
-	margin-bottom: 0.5rem;
-}
-#loader {
-	width: 3rem;
-	margin: calc(30vh - 1.5rem) auto 0px;
+	margin: 3rem auto;
 }
 #login {
 	position: fixed;
 	inset: 0px;
-	background: var(--background);
+	background: var(--white);
 	margin: 0px;
 }
 #login .wrap {
@@ -257,23 +207,25 @@ input::placeholder {
 	cursor: pointer;
 	opacity: 0.8;
 }
+#handle {
+	font-size: 2rem;
+	font-weight: bold;
+}
+#handle span {
+	cursor: pointer;
+}
+#handle span:hover {
+	text-decoration: underline;
+	text-decoration-color: var(--brand-color-1);
+	text-underline-offset: 0.2rem;
+	text-decoration-thickness: 0.2rem;
+}
+#handle span:before {
+	content: "@";
+	font-size: 1.8rem;
+}
 #noposts {
 	margin-top: 5rem;
-}
-#header {
-	margin-bottom: 0.5rem;
-}
-#header #menuBtn {
-	text-decoration: none;
-	width: 2rem;
-	height: 2rem;
-	text-align: center;
-	line-height: 2rem;
-	display: inline-block;
-	border-radius: 50%;
-}
-#header #menuBtn:hover {
-	background: var(--light2);
 }
 #sharebox {
 	position: relative;
@@ -301,7 +253,7 @@ input::placeholder {
 	z-index: 15;
 }
 #settings {
-	background: var(--background);
+	background: var(--white);
 	position: relative;
 	inset: 6rem auto auto;
 	z-index: 20;
@@ -311,10 +263,9 @@ input::placeholder {
 	box-shadow: 1px 1px 8px 0px var(--gray);
 }
 #settings .item {
-	display: block;
 	margin: 0px;
 	padding: 1rem;
-	border-bottom: 1px solid var(--light1);
+	border-bottom: 1px solid var(--light);
 	text-decoration: none;
 }
 #settings .item:first-child {
@@ -329,11 +280,13 @@ input::placeholder {
 	cursor: pointer;
 }
 #settings .item.link:hover {
-	background: var(--light1);
+	background: var(--light);
 }
 #settings input {
 	padding: 0.1rem 0.5rem;
-	margin-right: 0.5rem;
+}
+#settings a.item {
+	display: block;
 }
 #settings .paswwordWrap {
 	justify-content: unset;
